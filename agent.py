@@ -3,6 +3,7 @@
 from memory import load_memory, save_memory
 from tools import get_news, write_file, read_file
 from llm import call_ai
+from db import add_memory, get_memory, clear_memory
 
 # -------- DECISION ENGINE --------
 def decide(user_input):
@@ -63,20 +64,38 @@ Bot:
     return call_ai(prompt)
 
 # -------- MAIN AGENT --------
-def agent(user_input):
-    memory = load_memory()
+def agent(user_input, user_id="default"):
 
-    # Decide what to do
-    plan = decide(user_input)
+    # COMMANDS
+    if user_input.startswith("/memory"):
+        mem = get_memory(user_id)
+        if not mem:
+            return "No memory stored."
 
-    # Execute action
-    result = execute(plan)
+        return "\n".join([f"{i+1}. {m['content']}" for i, m in enumerate(mem)])
 
-    # Save memory
-    memory.append({
-        "user": user_input,
-        "bot": result
-    })
-    save_memory(memory)
+    if user_input.startswith("/clear"):
+        clear_memory(user_id)
+        return "Memory cleared."
 
-    return result
+    # NORMAL FLOW
+    mem = get_memory(user_id)
+
+    history = ""
+    for m in mem[:5]:
+        history += f"{m['content']}\n"
+
+    prompt = f"""
+Memory:
+{history}
+
+User: {user_input}
+"""
+
+    response = call_ai(prompt)
+
+    # save memory
+    add_memory(user_id, f"User: {user_input}")
+    add_memory(user_id, f"Bot: {response}")
+
+    return response
