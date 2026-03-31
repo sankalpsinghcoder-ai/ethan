@@ -30,7 +30,7 @@ def execute(plan):
     tool = plan["tool"]
 
     if tool == "news":
-        return get_news()
+    return get_news(plan.get("query", ""))
 
     elif tool == "write":
         return write_file(plan["input"])
@@ -107,6 +107,18 @@ def agent(user_input, user_id="default"):
 
         except:
             return "Usage: /clear or /clear 2"
+
+    # -------- TOOL ROUTING --------
+    plan = decide(user_input)
+
+    if plan["tool"] != "chat":
+        result = execute(plan)
+
+        # store tool result as memory
+        pair = f"User: {user_input}\nBot: {result}"
+        add_memory(user_id, pair, "short")
+
+        return result
 
     # -------- FETCH MEMORY --------
     short_mem = get_memory(user_id, "short", 5)
