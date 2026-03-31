@@ -8,8 +8,13 @@ from tools import get_news, write_file, read_file
 def decide(user_input):
     text = user_input.lower()
 
-    if "news" in text:
-        return {"tool": "news"}
+    if text.startswith("news"):
+        parts = user_input.split(" ", 1)
+
+        if len(parts) > 1:
+            return {"tool": "news", "query": parts[1]}
+        else:
+            return {"tool": "news", "query": ""}
 
     if text.startswith("write"):
         return {"tool": "write", "input": user_input}
@@ -18,7 +23,6 @@ def decide(user_input):
         return {"tool": "read"}
 
     return {"tool": "chat", "input": user_input}
-
 
 # -------- EXECUTION ENGINE --------
 def execute(plan):
