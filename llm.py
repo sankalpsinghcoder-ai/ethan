@@ -14,7 +14,7 @@ def call_ai(prompt):
     }
 
     data = {
-        "model": "openai/gpt-oss-20b",
+        "model": "groq/compound-mini",
         "messages": [
             {"role": "system", "content": "You are a helpful AI assistant."},
             {"role": "user", "content": prompt}
