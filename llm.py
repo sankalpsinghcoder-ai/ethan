@@ -14,7 +14,7 @@ def call_ai(prompt):
     }
 
     data = {
-        "model": "qwen/qwen3-32b",
+        "model": "llama-3.3-70b-versatile",
         "messages": [
             {"role": "system", "content": "You are a helpful AI assistant."},
             {"role": "user", "content": prompt}
