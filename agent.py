@@ -3,7 +3,7 @@
 from memory import load_memory, save_memory
 from tools import get_news, write_file, read_file
 from llm import call_ai
-from db import add_memory, get_memory, clear_memory
+from db import add_memory, get_memory, clear_memory, delete_memory_by_id
 
 # -------- DECISION ENGINE --------
 def decide(user_input):
@@ -66,36 +66,71 @@ Bot:
 # -------- MAIN AGENT --------
 def agent(user_input, user_id="default"):
 
-    # COMMANDS
+    # -------- SHOW MEMORY --------
     if user_input.startswith("/memory"):
         mem = get_memory(user_id)
+
         if not mem:
-            return "No memory stored."
+            return "No memory found."
 
-        return "\n".join([f"{i+1}. {m['content']}" for i, m in enumerate(mem)])
+        return "\n\n".join([
+            f"{i+1}) {m['pair']}"
+            for i, m in enumerate(mem)
+        ])
 
+    # -------- CLEAR MEMORY --------
     if user_input.startswith("/clear"):
-        clear_memory(user_id)
-        return "Memory cleared."
+        parts = user_input.split()
 
-    # NORMAL FLOW
-    mem = get_memory(user_id)
+        # clear all
+        if len(parts) == 1:
+            clear_memory(user_id)
+            return "All memory cleared."
 
-    history = ""
-    for m in mem[:5]:
-        history += f"{m['content']}\n"
+        # clear by index
+        try:
+            index = int(parts[1]) - 1
+            mem = get_memory(user_id)
 
+            if index < 0 or index >= len(mem):
+                return "Invalid index."
+
+            delete_memory_by_id(mem[index]["id"])
+            return f"Deleted memory {index+1}"
+
+        except:
+            return "Usage: /clear or /clear 2"
+
+    # -------- FETCH MEMORY --------
+    short_mem = get_memory(user_id, "short", 5)
+    long_mem = get_memory(user_id, "long", 5)
+
+    short_context = "\n".join([m["pair"] for m in short_mem])
+    long_context = "\n".join([m["pair"] for m in long_mem])
+
+    # -------- AI PROMPT --------
     prompt = f"""
-Memory:
-{history}
+You are an intelligent assistant.
+
+Use long-term memory ONLY if relevant.
+
+Long-term memory:
+{long_context}
+
+Recent conversation:
+{short_context}
 
 User: {user_input}
 """
 
     response = call_ai(prompt)
 
-    # save memory
-    add_memory(user_id, f"User: {user_input}")
-    add_memory(user_id, f"Bot: {response}")
+    # -------- STORE SHORT MEMORY --------
+    pair = f"User: {user_input}\nBot: {response}"
+    add_memory(user_id, pair, "short")
+
+    # -------- AUTO LONG MEMORY --------
+    if any(word in user_input.lower() for word in ["my name", "i am", "remember"]):
+        add_memory(user_id, pair, "long")
 
     return response
