@@ -6,7 +6,22 @@ import os
 
 # -------- NEWS TOOL --------
 def get_news():
-    return "News feature coming soon 📰"
+    api_key = os.getenv("NEWS_API_KEY")
+
+    url = f"https://newsapi.org/v2/top-headlines?country=in&apiKey={api_key}"
+    
+    try:
+        data = requests.get(url).json()
+        articles = data.get("articles", [])[:5]
+
+        if not articles:
+            return "No news found."
+
+        news = "\n\n".join([f"• {a['title']}" for a in articles])
+        return f"📰 Latest News:\n\n{news}"
+
+    except Exception as e:
+        return "Error fetching news."
 
 
 # -------- FILE WRITE --------
