@@ -21,10 +21,14 @@ def call_ai(prompt):
         ]
     }
 
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        result = response.json()
-        return result["choices"][0]["message"]["content"]
+    response = requests.post(url, headers=headers, json=data)
+    result = response.json()
 
-    except Exception as e:
-        return str(e)
+    # 🔥 Debug print (important)
+    print("GROQ RESPONSE:", result)
+
+    # Handle errors properly
+    if "choices" not in result:
+        return f"Error from AI: {result}"
+
+    return result["choices"][0]["message"]["content"]
