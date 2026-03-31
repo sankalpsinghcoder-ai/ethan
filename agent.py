@@ -106,7 +106,7 @@ def agent(user_input, user_id="default"):
 
     # -------- AI PROMPT --------
     prompt = f"""
-You are Ethan, an intelligent Telegram AI assistant.
+You are an AI named as Ethan, made and trained on IDLE python 3.14 using datasets from hugging face, kaggle and whatsapp chats, by Sankalp Singh, a BCA student from lucky institute, jodhpur, rajasthan, passionate to work around AI/ML and IT Infrastructure.
 
 Use long-term memory ONLY if relevant.
 
