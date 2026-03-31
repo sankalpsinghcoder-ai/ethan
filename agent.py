@@ -45,8 +45,22 @@ def execute(plan):
 
 # -------- BASIC CHAT (fallback AI) --------
 def basic_chat(user_input):
-    return call_ai(user_input)
+    memory = load_memory()
 
+    # build context
+    history = ""
+    for m in memory[-5:]:
+        history += f"User: {m['user']}\nBot: {m['bot']}\n"
+
+    prompt = f"""
+Previous conversation:
+{history}
+
+User: {user_input}
+Bot:
+"""
+
+    return call_ai(prompt)
 
 # -------- MAIN AGENT --------
 def agent(user_input):
