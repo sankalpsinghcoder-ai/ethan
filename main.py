@@ -25,7 +25,9 @@ async def telegram_webhook(req: Request):
 
         # Extract message safely
         message = data.get("message", {}).get("text", "")
-        chat_id = data.get("message", {}).get("chat", {}).get("id")
+        chat_id = data["message"]["chat"]["id"]
+
+        reply = agent(message, user_id=str(chat_id))
 
         # If no valid message
         if not chat_id:
