@@ -2,7 +2,7 @@
 
 from memory import load_memory, save_memory
 from tools import get_news, write_file, read_file
-
+from llm import call_ai
 
 # -------- DECISION ENGINE --------
 def decide(user_input):
@@ -45,7 +45,7 @@ def execute(plan):
 
 # -------- BASIC CHAT (fallback AI) --------
 def basic_chat(user_input):
-    return f"You said: {user_input}"
+    return call_ai(user_input)
 
 
 # -------- MAIN AGENT --------
