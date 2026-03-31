@@ -1,9 +1,9 @@
 # agent.py
 
-from memory import load_memory, save_memory
 from tools import get_news, write_file, read_file
 from llm import call_ai
 from db import add_memory, get_memory, clear_memory, delete_memory_by_id
+
 
 # -------- DECISION ENGINE --------
 def decide(user_input):
@@ -11,11 +11,8 @@ def decide(user_input):
 
     if text.startswith("news"):
         parts = user_input.split(" ", 1)
-
-        if len(parts) > 1:
-            return {"tool": "news", "query": parts[1]}
-        else:
-            return {"tool": "news", "query": ""}
+        query = parts[1] if len(parts) > 1 else ""
+        return {"tool": "news", "query": query}
 
     if text.startswith("write"):
         return {"tool": "write", "input": user_input}
@@ -25,12 +22,13 @@ def decide(user_input):
 
     return {"tool": "chat", "input": user_input}
 
+
 # -------- EXECUTION ENGINE --------
 def execute(plan):
     tool = plan["tool"]
 
     if tool == "news":
-    return get_news(plan.get("query", ""))
+        return get_news(plan.get("query", ""))
 
     elif tool == "write":
         return write_file(plan["input"])
@@ -39,47 +37,27 @@ def execute(plan):
         return read_file()
 
     elif tool == "chat":
-        return basic_chat(plan["input"])
+        return None  # handled later
 
     return "I don't understand."
 
 
-# -------- BASIC CHAT (fallback AI) --------
-def basic_chat(user_input):
-    memory = load_memory()
-
-    # build context
-    history = ""
-    for m in memory[-5:]:
-        history += f"User: {m['user']}\nBot: {m['bot']}\n"
-
-    prompt = f"""
-Previous conversation:
-{history}
-
-User: {user_input}
-Bot:
-"""
-
-    return call_ai(prompt)
-
 # -------- MAIN AGENT --------
 def agent(user_input, user_id="default"):
 
-    # -------- SHOW MEMORY --------
+    # -------- MEMORY VIEW --------
     if user_input.startswith("/memory"):
         parts = user_input.split()
-    
+
         mem_type = None
-        if len(parts) > 1:
-            if parts[1] in ["short", "long"]:
-                mem_type = parts[1]
-    
+        if len(parts) > 1 and parts[1] in ["short", "long"]:
+            mem_type = parts[1]
+
         mem = get_memory(user_id, mem_type)
-    
+
         if not mem:
             return "No memory found."
-    
+
         return "\n\n".join([
             f"{i+1}) [{m['type']}] {m['pair']}"
             for i, m in enumerate(mem)
@@ -114,7 +92,6 @@ def agent(user_input, user_id="default"):
     if plan["tool"] != "chat":
         result = execute(plan)
 
-        # store tool result as memory
         pair = f"User: {user_input}\nBot: {result}"
         add_memory(user_id, pair, "short")
 
@@ -129,7 +106,7 @@ def agent(user_input, user_id="default"):
 
     # -------- AI PROMPT --------
     prompt = f"""
-You are an AI named as Ethan, made and trained on IDLE python 3.14 using datasets from hugging face, kaggle and whatsapp chats, by Sankalp Singh, a BCA student from lucky institute, jodhpur, rajasthan, passionate to work around AI/ML and IT Infrastructure. He made you for working as an ai for the user that can chat on telegram.
+You are Ethan, an intelligent Telegram AI assistant.
 
 Use long-term memory ONLY if relevant.
 
@@ -149,7 +126,9 @@ User: {user_input}
     add_memory(user_id, pair, "short")
 
     # -------- AUTO LONG MEMORY --------
-    if any(word in user_input.lower() for word in ["my name", "i am", "remember"]):
+    if any(word in user_input.lower() for word in [
+        "my name", "i am", "i live", "remember", "my age", "i study"
+    ]):
         add_memory(user_id, pair, "long")
 
     return response
