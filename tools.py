@@ -6,21 +6,23 @@ import os
 
 # -------- NEWS TOOL --------
 def get_news():
-    api_key = os.getenv("NEWS_API_KEY")
+    url = "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en"
 
-    url = f"https://newsapi.org/v2/top-headlines?country=in&apiKey={api_key}"
-    
     try:
-        data = requests.get(url).json()
-        articles = data.get("articles", [])[:5]
+        response = requests.get(url)
+        text = response.text
 
-        if not articles:
-            return "No news found."
+        # simple parsing
+        items = text.split("<item>")[1:6]
 
-        news = "\n\n".join([f"• {a['title']}" for a in articles])
-        return f"📰 Latest News:\n\n{news}"
+        news = []
+        for item in items:
+            title = item.split("<title>")[1].split("</title>")[0]
+            news.append(f"• {title}")
 
-    except Exception as e:
+        return "📰 Latest News:\n\n" + "\n\n".join(news)
+
+    except:
         return "Error fetching news."
 
 
