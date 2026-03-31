@@ -1,3 +1,5 @@
+# main.py
+
 from fastapi import FastAPI, Request
 import requests
 import os
@@ -5,32 +7,48 @@ from agent import agent
 
 app = FastAPI()
 
-TOKEN = os.getenv("TOKEN")  # we will set this in Railway
+# Get token from Railway environment
+TOKEN = os.getenv("TOKEN")
 
+
+# -------- HEALTH CHECK --------
 @app.get("/")
 def home():
     return {"status": "running"}
 
 
+# -------- TELEGRAM WEBHOOK --------
 @app.post("/webhook")
 async def telegram_webhook(req: Request):
-    data = await req.json()
+    try:
+        data = await req.json()
 
-    message = data.get("message", {}).get("text", "")
-    chat_id = data["message"]["chat"]["id"]
+        # Extract message safely
+        message = data.get("message", {}).get("text", "")
+        chat_id = data.get("message", {}).get("chat", {}).get("id")
 
-    if message:
-        reply = agent(message)
-    else:
-        reply = "Send text message."
+        # If no valid message
+        if not chat_id:
+            return {"ok": True}
 
-    # send reply back to Telegram
-    requests.post(
-        f"https://api.telegram.org/bot{TOKEN}/sendMessage",
-        json={
-            "chat_id": chat_id,
-            "text": reply
-        }
-    )
+        if message:
+            reply = agent(message)
+        else:
+            reply = "Send text message."
 
-    return {"ok": True}
+        # Send reply to Telegram
+        url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+
+        requests.post(
+            url,
+            json={
+                "chat_id": chat_id,
+                "text": reply
+            }
+        )
+
+        return {"ok": True}
+
+    except Exception as e:
+        print("ERROR:", e)
+        return {"ok": False}
