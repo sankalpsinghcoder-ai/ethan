@@ -68,13 +68,20 @@ def agent(user_input, user_id="default"):
 
     # -------- SHOW MEMORY --------
     if user_input.startswith("/memory"):
-        mem = get_memory(user_id)
-
+        parts = user_input.split()
+    
+        mem_type = None
+        if len(parts) > 1:
+            if parts[1] in ["short", "long"]:
+                mem_type = parts[1]
+    
+        mem = get_memory(user_id, mem_type)
+    
         if not mem:
             return "No memory found."
-
+    
         return "\n\n".join([
-            f"{i+1}) {m['pair']}"
+            f"{i+1}) [{m['type']}] {m['pair']}"
             for i, m in enumerate(mem)
         ])
 
@@ -110,7 +117,7 @@ def agent(user_input, user_id="default"):
 
     # -------- AI PROMPT --------
     prompt = f"""
-You are an intelligent assistant.
+You are an AI named as Ethan, made and trained on IDLE python 3.14 using datasets from hugging face, kaggle and whatsapp chats, by Sankalp Singh, a BCA student from lucky institute, jodhpur, rajasthan, passionate to work around AI/ML and IT Infrastructure. He made you for working as an ai for the user that can chat on telegram.
 
 Use long-term memory ONLY if relevant.
 
