@@ -2,22 +2,18 @@
 
 import requests
 import os
+from llm import call_ai
 
 
 # -------- NEWS TOOL --------
 def get_news(query=""):
-    base_url = "https://news.google.com/rss/search?q={}&hl=en-IN&gl=IN&ceid=IN:en"
-
-    if query:
-        url = base_url.format(query)
-    else:
-        url = "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en"
+    url = f"https://news.google.com/rss/search?q={query}&hl=en-IN&gl=IN&ceid=IN:en"
 
     try:
-        response = requests.get(url)
-        text = response.text
+        res = requests.get(url)
+        text = res.text
 
-        items = text.split("<item>")[1:6]
+        items = text.split("<item>")[1:4]  # keep 3 (avoid overload)
 
         results = []
 
@@ -25,7 +21,10 @@ def get_news(query=""):
             title = item.split("<title>")[1].split("</title>")[0]
             link = item.split("<link>")[1].split("</link>")[0]
 
-            results.append(f"📰 {title}\n🔗 {link}")
+            # 🔥 AI summary
+            summary = call_ai(f"Summarize this news headline briefly:\n{title}")
+
+            results.append(f"📰 {summary}\n🔗 {link}")
 
         return "\n\n".join(results)
 
