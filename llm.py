@@ -10,14 +10,14 @@ def call_ai(prompt):
     url = f"{BASE}/v1/chat/completions"
 
     payload = {
-        "model": "gpt-oss-120b",   # 🔥 best model
+        "model": "gpt-oss-20b",   # 🔥 best model
         "messages": [
             {"role": "system", "content": "You are a helpful AI assistant."},
             {"role": "user", "content": prompt}
         ],
         "stream": False,
         "metadata": {
-            "reasoning_effort": "medium"
+            "reasoning_effort": "none"
         }
     }
 
