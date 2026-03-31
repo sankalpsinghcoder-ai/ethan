@@ -25,5 +25,6 @@ def call_ai(prompt):
         response = requests.post(url, headers=headers, json=data)
         result = response.json()
         return result["choices"][0]["message"]["content"]
+
     except Exception as e:
-        return "AI error occurred."
+        return str(e)
