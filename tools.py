@@ -5,22 +5,29 @@ import os
 
 
 # -------- NEWS TOOL --------
-def get_news():
-    url = "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en"
+def get_news(query=""):
+    base_url = "https://news.google.com/rss/search?q={}&hl=en-IN&gl=IN&ceid=IN:en"
+
+    if query:
+        url = base_url.format(query)
+    else:
+        url = "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en"
 
     try:
         response = requests.get(url)
         text = response.text
 
-        # simple parsing
         items = text.split("<item>")[1:6]
 
-        news = []
+        results = []
+
         for item in items:
             title = item.split("<title>")[1].split("</title>")[0]
-            news.append(f"• {title}")
+            link = item.split("<link>")[1].split("</link>")[0]
 
-        return "📰 Latest News:\n\n" + "\n\n".join(news)
+            results.append(f"📰 {title}\n🔗 {link}")
+
+        return "\n\n".join(results)
 
     except:
         return "Error fetching news."
