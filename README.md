@@ -121,15 +121,15 @@ news india
 
 ### Memory
 
-/memory
-/memory short
+/memory\n
+/memory short\n
 /memory long
 
 ---
 
 ### Clear memory
 
-/clear
+/clear\n
 /clear 2
 
 ---
