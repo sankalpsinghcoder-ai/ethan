@@ -3,28 +3,29 @@
 import requests
 import os
 
-BASE = os.getenv("PROXY_URL")  # your worker URL
-
+API_KEY = os.getenv("GROQ_API_KEY")
 
 def call_ai(prompt):
-    url = f"{BASE}/v1/chat/completions"
+    url = "https://api.groq.com/openai/v1/chat/completions"
 
-    payload = {
-        "model": "gpt-oss-20b",   # 🔥 best model
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "model": "llama-3.3-70b-versatile",  # best stable Groq model
         "messages": [
-            {"role": "system", "content": "You are a helpful AI assistant."},
+            {"role": "system", "content": "You are a helpful AI assistant. Answer clearly and directly without showing reasoning steps."},
             {"role": "user", "content": prompt}
-        ],
-        "stream": False,
-        "metadata": {
-            "reasoning_effort": "none"
-        }
+        ]
     }
 
     try:
-        res = requests.post(url, json=payload, timeout=120)
-        result = res.json()
+        response = requests.post(url, headers=headers, json=data, timeout=120)
+        result = response.json()
 
+        # handle API errors
         if "choices" not in result:
             return f"AI error: {result}"
 
