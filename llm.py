@@ -14,7 +14,7 @@ def call_ai(prompt):
     }
 
     data = {
-        "model": "llama-3.3-70b-versatile",  # best stable Groq model
+        "model": "openai/gpt-oss-20b",  # best stable Groq model
         "messages": [
             {"role": "system", "content": "You are a helpful AI assistant. Answer clearly and directly without showing reasoning steps."},
             {"role": "user", "content": prompt}
