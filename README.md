@@ -61,7 +61,7 @@ Memory Storage
 * Groq LLM API
 * Supabase (PostgreSQL)
 * Railway (hosting)
-
+* GNews API (optional if using AI with browsing capability)
 ---
 
 ## ⚙️ Setup
