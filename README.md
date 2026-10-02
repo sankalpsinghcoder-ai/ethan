@@ -1,29 +1,29 @@
-# Ethan AI 🤖
+# Ethan AI
 
 Ethan AI is a cloud-based Telegram AI assistant built using Python, FastAPI, and modern LLM APIs.
 It supports memory, tool usage, real-time news, and a modular agent architecture.
 
 ---
 
-## 🚀 Features
+## Features
 
-* 💬 Chat-based AI assistant (Telegram bot)
-* 🧠 Short-term & long-term memory (Supabase)
-* 📰 Real-time news fetching with AI summaries
-* 🧩 Tool-based architecture (agent + tools)
-* 🔄 Context-aware conversations
-* 🧹 Memory management:
+* Chat-based AI assistant (Telegram bot)
+* Short-term & long-term memory (Supabase)
+* Real-time news fetching with AI summaries
+* Tool-based architecture (agent + tools)
+* Context-aware conversations
+* Memory management:
 
   * `/memory`
   * `/memory short`
   * `/memory long`
   * `/clear`
   * `/clear <index>`
-* ⚡ Fast cloud deployment (Railway)
+* Fast cloud deployment (Railway)
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 Telegram → FastAPI (Webhook) → Agent → Tools / LLM → Database
 
@@ -40,7 +40,7 @@ Telegram → FastAPI (Webhook) → Agent → Tools / LLM → Database
 
 ---
 
-## 🧠 Agent Design
+## Agent Design
 
 User Input
 ↓
@@ -54,7 +54,7 @@ Memory Storage
 
 ---
 
-## 📦 Tech Stack
+## Tech Stack
 
 * Python (FastAPI)
 * Telegram Bot API
@@ -64,7 +64,7 @@ Memory Storage
 * GNews API (optional if using AI with browsing capability)
 ---
 
-## ⚙️ Setup
+## Setup
 
 ### 1. Clone repo
 
@@ -103,7 +103,7 @@ https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://your-app.up.railway.a
 
 ---
 
-## 🧪 Usage
+## Usage
 
 ### Chat
 
@@ -134,7 +134,7 @@ news india
 
 ---
 
-## 🧠 Memory System
+## Memory System
 
 * Short-term → recent conversation
 * Long-term → important user facts
@@ -143,7 +143,7 @@ news india
 
 ---
 
-## 📰 News System
+## News System
 
 * Uses GNews API
 * Fetches real-time news
@@ -152,7 +152,7 @@ news india
 
 ---
 
-## ⚠️ Limitations
+## Limitations
 
 * Free API limits (Groq / GNews)
 * Basic tool routing (not autonomous yet)
@@ -160,24 +160,14 @@ news india
 
 ---
 
-## 🔥 Future Improvements
-
-* Autonomous agent loop (OpenClaw-style)
-* Reminder scheduler system
-* WhatsApp integration
-* Vector memory (semantic search)
-* Multi-model routing
-
----
-
-## 👨‍💻 Author
+## Author
 
 Sankalp Singh
-BCA Student | AI/ML & Infra Enthusiast
+BCA Student at Lucky Institute
 Jodhpur, Rajasthan
 
 ---
 
-## ⭐ Support
+## Support
 
 If you like this project, consider starring the repo ⭐
